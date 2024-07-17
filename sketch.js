@@ -5,15 +5,15 @@ function preload() {
 }
 
 function setup() {
-  createCanvas(windowHeight,windowHeight);
-  translate(width/2, height/2);
+  createCanvas(windowHeight, windowHeight);
+  img.loadPixels(); // Load pixels here to ensure img.width and img.height are defined
 }
 
 function draw() {
-  background(175);
+  background(255); // Set background to white
   let gridSize = 15; // Fixed grid size
   let force = 15;
-  img.loadPixels();
+
   for (let x = 0; x < img.width; x += gridSize) {
     for (let y = 0; y < img.height; y += gridSize) {
       let i = (y * img.width + x) * 4;
@@ -21,26 +21,28 @@ function draw() {
       let g = img.pixels[i + 1];
       let b = img.pixels[i + 2];
       let a = img.pixels[i + 3];
+
+      // Calculate luminance (brightness)
       let luma = 0.299 * r + 0.587 * g + 0.114 * b;
-      
-      // Calculate the distance between the cursor and the center of the circle
-      let distance = dist(mouseX, mouseY, map(x, 0, img.width, 0, width + force), map(y, 0, img.height, 0, height + force));
-      
-      // Map the distance to adjust the diameter of the circle
-      let diameter = map(luma, 0, 255, 0, gridSize) + map(distance/2, 0, width, 0,force);
-      
-      fill(255);
-      noStroke();
-      ellipse(
-        map(x, 0, img.width, 0, width + force),
-        map(y, 0, img.height, 0, height + force),
-        diameter,
-        diameter
-      );
+
+      // Draw circle only for non-white pixels
+
+        // Map the luminance to adjust the diameter of the circle
+        let baseDiameter = map(luma, 255, 0, 0, gridSize);
+
+        // Calculate the distance between the cursor and the center of the circle
+        let circleX = map(x, 0, img.width, 0, width + force);
+        let circleY = map(y, 0, img.height, 0, height + force);
+        let distance = dist(mouseX, mouseY, circleX, circleY);
+
+        // Adjust the diameter based on the distance to the cursor
+        let adjustedDiameter = baseDiameter + map(distance, width, 0, 0, force);
+
+        // Set the fill to a grey shade based on the luma
+        let greyShade = map(luma, 0, 255, 0, 100); // Adjust 100 to a higher value for lighter circles if needed
+        fill(155);
+        noStroke();
+        ellipse(circleX, circleY, adjustedDiameter, adjustedDiameter);
+      }
     }
   }
-}
-
-//function keyPressed() {
-  //save();
-//}
