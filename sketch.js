@@ -27,7 +27,7 @@ function draw() {
       let distance = dist(mouseX, mouseY, map(x, 0, img.width, 0, width + force), map(y, 0, img.height, 0, height + force));
       
       // Map the distance to adjust the diameter of the circle
-      let diameter = map(luma, 0, 255, 0, gridSize) + map(distance, 0, width, 0,force);
+      let diameter = map(luma, 0, 255, 0, gridSize) + map(distance/2, 0, width, 0,force);
       
       fill(255);
       noStroke();
